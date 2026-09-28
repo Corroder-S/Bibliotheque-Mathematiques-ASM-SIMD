@@ -1,1 +1,1 @@
-# Bibliotheque-Math-matiques-ASM-SIMD
+# Bibliotheque-Mathematiques-ASM-SIMD
