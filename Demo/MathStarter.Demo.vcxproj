@@ -65,9 +65,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Demo\main.cpp" />
+    <ClCompile Include="..\Maths\MatBatchRef.cpp" />
+    <ClCompile Include="..\Maths\MatBatchSSE.cpp" />
     <ClCompile Include="..\Platform\CpuFeatures.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Maths\MatBatch.h" />
     <ClInclude Include="..\Maths\Matrix3x3.h" />
     <ClInclude Include="..\Maths\Vec3.h" />
     <ClInclude Include="..\Maths\Vec4.h" />
