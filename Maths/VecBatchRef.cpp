@@ -21,7 +21,7 @@ namespace Maths
 
     namespace Ref
     {
-        void DotProductAOS(const Vec3f* a, const Vec3f* b, float* result, size_t count)
+        void DotProduct_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count)
         {
             for (size_t i = 0; i < count; ++i)
             {
@@ -29,7 +29,7 @@ namespace Maths
             }
         }
 
-        void DotProductSOA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count)
+        void DotProduct_SOA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count)
         {
             for (size_t i = 0; i < count; ++i)
             {

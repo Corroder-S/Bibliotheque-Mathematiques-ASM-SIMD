@@ -1,12 +1,10 @@
 #include "TestHelpers.h"
 #include "Maths/Vec3.h"
 #include "Maths/VecBatch.h"
-#include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace TestHelpers;
 
-namespace Test::Ref
+namespace
 {
     void BuildKnownData(std::vector<Maths::Vec3f>& a, std::vector<Maths::Vec3f>& b, size_t count)
     {
@@ -19,16 +17,16 @@ namespace Test::Ref
         }
     }
 
-    void DotProduct_ReferenceMatchesKnownValues()
+    void Ref_DotProductMatchesKnownValues()
     {
-        std::vector <Maths::Vec3f > a = { Maths::Vec3f{1,2,3}, Maths::Vec3f{2,3,4} };
-        std::vector<Maths::Vec3f> b = { Maths::Vec3f{2,3,4}, Maths::Vec3f{1,0,0} };
-        std::vector<float> out(2);
+        const Maths::Vec3f a[] = { {1,2,3}, {2,3,4} };
+        const Maths::Vec3f b[] = { {2,3,4}, {1,0,0} };
+        float out[2] = {};
 
-        Maths::Ref::DotProduct_AOS(a.data(), b.data(), out.data(), 2);
+        Maths::Ref::DotProduct_AOS(a, b, out, 2);
 
-        Near(20.0f, out[0]);
-        Near(2.0f, out[1]);
+        TestHelpers::Near(20.0f, out[0]);
+        TestHelpers::Near(2.0f, out[1]);
     }
 
     void DotProduct_HandlesEmptyBatch()
@@ -40,7 +38,7 @@ namespace Test::Ref
         Maths::SSE::DotProduct_AOS(a.data(), b.data(), out.data(), 0);
     }
 
-    void DotProduct_SSE_AoS_MatchesReferenceForSize(size_t count)
+    void RefAndSSE_AoS_GiveSameResult(size_t count)
     {
         std::vector<Maths::Vec3f> a, b;
         BuildKnownData(a, b, count);
@@ -53,11 +51,11 @@ namespace Test::Ref
 
         for (size_t i = 0; i < count; ++i)
         {
-            Near(outRef[i], outSse[i]);
+            TestHelpers::Near(outRef[i], outSse[i]);
         }
     }
 
-    void DotProduct_SSE_SoA_MatchesReferenceForSize(size_t count)
+    void RefAndSSE_SoA_GiveSameResult(size_t count)
     {
         std::vector<Maths::Vec3f> a, b;
         BuildKnownData(a, b, count);
@@ -73,7 +71,51 @@ namespace Test::Ref
 
         for (size_t i = 0; i < count; ++i)
         {
-            Near(outRef[i], outSoa[i]);
+            TestHelpers::Near(outRef[i], outSoa[i]);
         }
     }
+}
+
+namespace MathStarterTests
+{
+    TEST_CLASS(VecBatchTests)
+    {
+    public:
+        TEST_METHOD(Ref_DotProductMatchesKnownValues)
+        {
+            ::Ref_DotProductMatchesKnownValues();
+        }
+
+        TEST_METHOD(DotProduct_HandlesEmptyBatch)
+        {
+            ::DotProduct_HandlesEmptyBatch();
+        }
+
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        {
+            ::RefAndSSE_AoS_GiveSameResult(1);
+        }
+
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        {
+            ::RefAndSSE_AoS_GiveSameResult(4);
+        }
+
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        {
+            ::RefAndSSE_SoA_GiveSameResult(4);
+        }
+
+
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        {
+            ::RefAndSSE_AoS_GiveSameResult(7);
+        }
+
+
+        TEST_METHOD(RefAndSSE_SoA_GiveSameResult)
+        {
+            ::RefAndSSE_SoA_GiveSameResult(1000);
+        }
+    };
 }
