@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Maths\MatBatchRef.cpp" />
+    <ClCompile Include="..\Maths\MatBatchSSE.cpp" />
     <ClCompile Include="..\Tests\BenchmarkTests.cpp" />
     <ClCompile Include="..\Tests\CpuFeaturesTests.cpp" />
     <ClCompile Include="..\Tests\Matrix3x3Tests.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="..\Tests\Vec3Tests.cpp" />
     <ClCompile Include="..\Tests\Vec4Tests.cpp" />
     <ClCompile Include="..\Platform\CpuFeatures.cpp" />
+    <ClCompile Include="MatBatchTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Maths\MatBatch.h" />
