@@ -4,6 +4,7 @@
 BenchmarkMenu::BenchmarkMenu(unsigned int seed) : rng(seed)
 {
     operations.push_back({"TransformPointBatch", Ref_TransformPointBatch, SSE_TransformPointBatch});
+    operations.push_back({ "DotProduct", Ref_DotProduct, SSE_DotProduct });
 }
 
 void BenchmarkMenu::MainMenu()

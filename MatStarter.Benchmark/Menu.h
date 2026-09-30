@@ -8,6 +8,7 @@
 #include "Maths/MatBatch.h"
 #include "Maths/Matrix3x3.h"
 #include "Benchmark/MatBenchmark.h"
+#include "Benchmark/VecBenchmark.h"
 #include "Benchmark/BenchmarkData.h"
 
 

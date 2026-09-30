@@ -79,9 +79,9 @@
     <ClCompile Include="..\Demo\main.cpp" />
     <ClCompile Include="..\Maths\MatBatchRef.cpp" />
     <ClCompile Include="..\Maths\MatBatchSSE.cpp" />
+    <ClCompile Include="..\Maths\VecBatchRef.cpp" />
+    <ClCompile Include="..\Maths\VecBatchSSE.cpp" />
     <ClCompile Include="..\Platform\CpuFeatures.cpp" />
-    <ClCompile Include="VecBatchRef.cpp" />
-    <ClCompile Include="VecBatchSSE.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Maths\MatBatch.h" />
@@ -89,9 +89,9 @@
     <ClInclude Include="..\Maths\Vec3.h" />
     <ClInclude Include="..\Maths\Vec4.h" />
     <ClInclude Include="..\Maths\Matrix4x4.h" />
+    <ClInclude Include="..\Maths\VecBatch.h" />
     <ClInclude Include="..\Platform\CpuFeatures.h" />
     <ClInclude Include="..\Benchmark\Benchmark.h" />
-    <ClInclude Include="VecBatch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
 </Project>

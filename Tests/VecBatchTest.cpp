@@ -91,29 +91,29 @@ namespace MathStarterTests
             ::DotProduct_HandlesEmptyBatch();
         }
 
-        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult1)
         {
             ::RefAndSSE_AoS_GiveSameResult(1);
         }
 
-        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult4)
         {
             ::RefAndSSE_AoS_GiveSameResult(4);
         }
 
-        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        TEST_METHOD(RefAndSSE_SoA_GiveSameResult4)
         {
             ::RefAndSSE_SoA_GiveSameResult(4);
         }
 
 
-        TEST_METHOD(RefAndSSE_AoS_GiveSameResult)
+        TEST_METHOD(RefAndSSE_AoS_GiveSameResult7)
         {
             ::RefAndSSE_AoS_GiveSameResult(7);
         }
 
 
-        TEST_METHOD(RefAndSSE_SoA_GiveSameResult)
+        TEST_METHOD(RefAndSSE_SoA_GiveSameResult100)
         {
             ::RefAndSSE_SoA_GiveSameResult(1000);
         }

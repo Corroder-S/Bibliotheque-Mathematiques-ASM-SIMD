@@ -162,6 +162,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Maths\VecBatchRef.cpp" />
+    <ClCompile Include="..\Maths\VecBatchSSE.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\Maths\MatBatchRef.cpp" />
     <ClCompile Include="..\Maths\MatBatchSSE.cpp" />
@@ -170,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="Benchmark\BenchmarkData.h" />
     <ClInclude Include="Benchmark\MatBenchmark.h" />
+    <ClInclude Include="Benchmark\VecBenchmark.h" />
     <ClInclude Include="Menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
