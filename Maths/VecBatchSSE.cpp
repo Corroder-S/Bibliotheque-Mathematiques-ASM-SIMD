@@ -1,10 +1,10 @@
-#include "Maths/VecBatch.h"
+#include "VecBatch.h"
 
 namespace Maths
 {
     namespace SSE
     {
-        void DotProduct_AoS(const Vec3f* a, const Vec3f* b, float* result, size_t count)
+        void DotProductAoS(const Vec3f* a, const Vec3f* b, float* result, size_t count)
         {
             size_t i = 0;
             const size_t width = 4;
@@ -31,7 +31,7 @@ namespace Maths
 
         }
 
-        void DotProduct_SoA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count)
+        void DotProductSoA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count)
         {
             size_t i = 0;
             const size_t simdWidth = 4;
