@@ -5,31 +5,19 @@
 # Localise les headers du framework VS Unit Test
 find_path(VS_UNITTEST_INCLUDE_DIR
     NAMES CppUnitTest.h
-    HINTS
-        "$ENV{VSINSTALLDIR}VC/Auxiliary/VS/UnitTest/include"
-        "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/UnitTest/include"
-        "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/VS/UnitTest/include"
-        "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Auxiliary/VS/UnitTest/include"
+    HINTS "$ENV{VSINSTALLDIR}/VC/Auxiliary/VS/UnitTest/include"
 )
 
 # Localise la lib x64 du framework
 find_library(VS_UNITTEST_LIB
     NAMES Microsoft.VisualStudio.TestTools.CppUnitTestFramework
-    HINTS
-        "$ENV{VSINSTALLDIR}VC/Auxiliary/VS/UnitTest/lib/x64"
-        "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/UnitTest/lib/x64"
-        "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/VS/UnitTest/lib/x64"
-        "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Auxiliary/VS/UnitTest/lib/x64"
+    HINTS "$ENV{VSINSTALLDIR}/VC/Auxiliary/VS/UnitTest/lib/x64"
 )
 
 # Localise vstest.console.exe pour CTest
 find_program(VSTEST_CONSOLE
     NAMES vstest.console.exe
-    HINTS
-        "$ENV{VSINSTALLDIR}Common7/IDE/CommonExtensions/Microsoft/TestWindow"
-        "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/TestWindow"
-        "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/TestWindow"
-        "C:/Program Files/Microsoft Visual Studio/2022/Professional/Common7/IDE/CommonExtensions/Microsoft/TestWindow"
+    HINTS "$ENV{VSINSTALLDIR}/Common7/IDE/CommonExtensions/Microsoft/TestWindow"
 )
 
 if(NOT VS_UNITTEST_INCLUDE_DIR)
