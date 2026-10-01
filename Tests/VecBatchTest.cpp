@@ -29,6 +29,10 @@ namespace
         TestHelpers::Near(2.0f, out[1]);
     }
 
+    void Ref_NormalizeMatchesKnownValues()
+    {
+    }
+
     void DotProduct_HandlesEmptyBatch()
     {
         std::vector<Maths::Vec3f> a, b;
