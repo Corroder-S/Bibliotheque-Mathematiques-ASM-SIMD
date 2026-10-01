@@ -39,3 +39,12 @@ inline Benchmark::Result SSE_DotProduct_SOA(BenchmarkData& data)
             return static_cast<double>(data.floatOut[0]);
     });
 }
+
+inline Benchmark::Result ASM_DotProduct(BenchmarkData& data)
+{
+    return Benchmark::Run([&]
+    {
+            Maths::ASM::Dot_Product_ASM(data.vec3A.data(), data.vec3B.data(), data.floatOut.data(), data.vec3A.size());
+            return static_cast<double>(data.floatOut[0]);
+    });
+}

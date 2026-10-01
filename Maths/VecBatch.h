@@ -25,4 +25,10 @@ namespace Maths
         void DotProduct_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count);
         void DotProduct_SOA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count);
     }
+    
+    namespace ASM
+    {
+        void Dot_Product_ASM(const Vec3f* a, const Vec3f* b, float* result, size_t count);
+        
+    }
 }

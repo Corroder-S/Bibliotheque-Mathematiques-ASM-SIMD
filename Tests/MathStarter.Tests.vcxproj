@@ -104,4 +104,13 @@
     <ClInclude Include="..\Tests\TestHelpers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)/Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+  <ItemGroup>
+    <MASM Include="..\Maths\VecASM.asm" />
+  </ItemGroup>
 </Project>

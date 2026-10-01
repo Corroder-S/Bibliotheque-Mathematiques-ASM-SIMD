@@ -19,6 +19,18 @@ namespace Maths
         return result;
     }
 
+    void ASM::Dot_Product_ASM(const Vec3f* a, const Vec3f* b, float* result, size_t count)
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            __asm
+            {
+  
+            
+            }
+        }
+    }
+
     namespace Ref
     {
         void DotProduct_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count)

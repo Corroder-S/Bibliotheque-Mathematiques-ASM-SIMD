@@ -89,6 +89,7 @@
     <ClInclude Include="..\Maths\Vec3.h" />
     <ClInclude Include="..\Maths\Vec4.h" />
     <ClInclude Include="..\Maths\Matrix4x4.h" />
+    <ClInclude Include="..\Maths\VecAsm.h" />
     <ClInclude Include="..\Maths\VecBatch.h" />
     <ClInclude Include="..\Platform\CpuFeatures.h" />
     <ClInclude Include="..\Benchmark\Benchmark.h" />
