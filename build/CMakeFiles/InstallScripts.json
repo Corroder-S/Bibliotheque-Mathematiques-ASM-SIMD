@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/leoam/Documents/repoGit/Bibliotheque-Mathematiques-ASM-SIMD/build/cmake_install.cmake",
+		"C:/Users/leoam/Documents/repoGit/Bibliotheque-Mathematiques-ASM-SIMD/build/Maths/cmake_install.cmake",
+		"C:/Users/leoam/Documents/repoGit/Bibliotheque-Mathematiques-ASM-SIMD/build/MatStarter.Benchmark/cmake_install.cmake",
+		"C:/Users/leoam/Documents/repoGit/Bibliotheque-Mathematiques-ASM-SIMD/build/Tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
