@@ -38,4 +38,7 @@ namespace Maths::SSE
             outPoints[i] = {tmp[0], tmp[1], tmp[2]};
         }
     }
+    
+    
+    
 }
