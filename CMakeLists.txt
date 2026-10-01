@@ -13,8 +13,15 @@ find_program(CMAKE_ASM_MASM_COMPILER
 )
 enable_language(ASM_MASM)
 
-enable_testing()
+include(FetchContent)
+FetchContent_Declare(
+    googlebenchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG        v1.9.1
+)
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googlebenchmark)
 
 add_subdirectory(Maths)
 add_subdirectory(MatStarter.Benchmark)
-add_subdirectory(Tests)

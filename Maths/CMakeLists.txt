@@ -1,9 +1,8 @@
 add_library(Maths STATIC
-    VecBatchRef.cpp
-    VecBatchSSE.cpp
-    MatBatchRef.cpp
-    MatBatchSSE.cpp
-    VecASM.asm
+    Ref/VecBatchRef.cpp
+    Ref/MatBatchRef.cpp
+    SSE/VecBatchSSE.cpp
+    SSE/MatBatchSSE.cpp
     ../Platform/CpuFeatures.cpp
 )
 

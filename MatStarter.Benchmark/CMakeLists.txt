@@ -1,10 +1,13 @@
-add_executable(MatStarterBenchmark
-    main.cpp
-    Menu.cpp
+add_executable(MatStarterBenchmarkGB
+    BenchmarkGB.cpp
 )
 
-target_link_libraries(MatStarterBenchmark PRIVATE Maths)
+target_link_libraries(MatStarterBenchmarkGB PRIVATE
+    Maths
+    benchmark::benchmark
+)
 
-target_include_directories(MatStarterBenchmark PRIVATE
+target_include_directories(MatStarterBenchmarkGB PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}
 )
