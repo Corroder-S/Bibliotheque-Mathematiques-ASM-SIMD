@@ -25,9 +25,6 @@ namespace Benchmark
         double checksum = 0;
     };
 
-    // One callback = one complete batch. Input creation belongs outside Run().
-    // work() returns a checksum depending on ALL its computed results.
-    // Print/use Result::checksum. This is not a portable optimization barrier.
     template <typename Work>
     Result Run(Work&& work, const Settings settings = {})
     {

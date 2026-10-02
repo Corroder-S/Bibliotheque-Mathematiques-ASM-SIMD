@@ -1,5 +1,5 @@
 #include "TestHelpers.h"
-#include "Benchmark/Benchmark.h"
+#include "Perf/PerfRun.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

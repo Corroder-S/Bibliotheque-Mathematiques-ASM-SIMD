@@ -6,8 +6,6 @@ Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "MathStarter.Demo", "Demo\Ma
 EndProject
 Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "MathStarter.Tests", "Tests\MathStarter.Tests.vcxproj", "{4E9F42CA-615C-5157-9ACF-AD889E07B367}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatStarter.Benchmark", "MatStarter.Benchmark\MatStarter.Benchmark.vcxproj", "{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -32,13 +30,5 @@ Global
 		{4E9F42CA-615C-5157-9ACF-AD889E07B367}.Release|Win32.Build.0 = Release|Win32
 		{4E9F42CA-615C-5157-9ACF-AD889E07B367}.Release|x64.ActiveCfg = Release|x64
 		{4E9F42CA-615C-5157-9ACF-AD889E07B367}.Release|x64.Build.0 = Release|x64
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Debug|Win32.Build.0 = Debug|Win32
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Debug|x64.ActiveCfg = Debug|x64
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Debug|x64.Build.0 = Debug|x64
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Release|Win32.ActiveCfg = Release|Win32
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Release|Win32.Build.0 = Release|Win32
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Release|x64.ActiveCfg = Release|x64
-		{2C21CF93-1D06-4612-9A5E-8293C22D2CFD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 EndGlobal
