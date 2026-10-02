@@ -25,3 +25,29 @@ FetchContent_MakeAvailable(googlebenchmark)
 
 add_subdirectory(Maths)
 add_subdirectory(MatStarter.Benchmark)
+
+# Cible pour lancer les tests VS depuis CLion
+find_program(MSBUILD_EXE MSBuild
+    HINTS
+        "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin"
+        "C:/Program Files/Microsoft Visual Studio/2022/Professional/MSBuild/Current/Bin"
+        "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/MSBuild/Current/Bin"
+)
+find_program(VSTEST_EXE vstest.console
+    HINTS
+        "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/Extensions/TestPlatform"
+        "C:/Program Files/Microsoft Visual Studio/2022/Professional/Common7/IDE/Extensions/TestPlatform"
+        "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/Common7/IDE/Extensions/TestPlatform"
+)
+if(MSBUILD_EXE AND VSTEST_EXE)
+    add_custom_target(RunTests
+        COMMAND ${MSBUILD_EXE}
+            "${CMAKE_SOURCE_DIR}/Tests/MathStarter.Tests.vcxproj"
+            /p:Configuration=Debug /p:Platform=x64 /nologo /v:minimal
+        COMMAND ${VSTEST_EXE}
+            "${CMAKE_SOURCE_DIR}/bin/x64/Debug/MathStarter.Tests.dll"
+            /Platform:x64
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Build + run unit tests (VS CppUnitTestFramework)"
+    )
+endif()
