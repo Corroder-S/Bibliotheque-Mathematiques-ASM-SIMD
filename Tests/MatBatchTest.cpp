@@ -2,8 +2,6 @@
 #include "Maths/Matrix4x4.h"
 #include "Maths/MatBatch.h"
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace
 {
     void Ref_TranslationAffectsPoints()
@@ -44,24 +42,6 @@ namespace
     }
 }
 
-namespace MathStarterTests
-{
-    TEST_CLASS(MatBatchTests)
-    {
-    public:
-        TEST_METHOD(Ref_TranslationAffectsPoints)
-        {
-            ::Ref_TranslationAffectsPoints();
-        }
-
-        TEST_METHOD(SSE_TranslationAffectsPoints)
-        {
-            ::SSE_TranslationAffectsPoints();
-        }
-
-        TEST_METHOD(RefAndSSEGiveSameResult)
-        {
-            ::RefAndSSEGiveSameResult();
-        }
-    };
-}
+TEST(MatBatchTests, Ref_TranslationAffectsPoints) { Ref_TranslationAffectsPoints(); }
+TEST(MatBatchTests, SSE_TranslationAffectsPoints) { SSE_TranslationAffectsPoints(); }
+TEST(MatBatchTests, RefAndSSEGiveSameResult)       { RefAndSSEGiveSameResult(); }

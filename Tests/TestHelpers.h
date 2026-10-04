@@ -1,5 +1,5 @@
 #pragma once
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include "Maths/Vec3.h"
 #include "Maths/Vec4.h"
 #include <cmath>
@@ -9,10 +9,9 @@
 
 namespace TestHelpers
 {
-    using Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
     template <typename T>
-    void Near(T expected, T actual, const wchar_t* context = L"value")
+    void Near(T expected, T actual, const char* context = "value")
     {
         // A failed NaN/Inf result must never silently pass a tolerance check.
         const T absoluteTolerance = T{64} * std::numeric_limits<T>::epsilon();
@@ -20,27 +19,28 @@ namespace TestHelpers
         const T tolerance = absoluteTolerance + relativeTolerance * std::abs(expected);
         const bool close = std::isfinite(expected) && std::isfinite(actual) &&
             std::abs(expected - actual) <= tolerance;
-        std::wostringstream message;
-        message << context << L": expected " << expected << L", actual " << actual
-                << L", tolerance " << tolerance;
-        Assert::IsTrue(close, message.str().c_str());
+        std::ostringstream message;
+        message << context << ": expected " << expected << ", actual " << actual
+                << ", tolerance " << tolerance;
+        EXPECT_TRUE(close) << message.str();
+
     }
 
     template <typename T>
     void VectorNear(const Maths::Vec3<T>& expected, const Maths::Vec3<T>& actual)
     {
-        Near(expected.x, actual.x, L"x");
-        Near(expected.y, actual.y, L"y");
-        Near(expected.z, actual.z, L"z");
+        Near(expected.x, actual.x, "x");
+        Near(expected.y, actual.y, "y");
+        Near(expected.z, actual.z, "z");
     }
 
     template <typename T>
     void VectorNear(const Maths::Vec4<T>& expected, const Maths::Vec4<T>& actual)
     {
-        Near(expected.x, actual.x, L"x");
-        Near(expected.y, actual.y, L"y");
-        Near(expected.z, actual.z, L"z");
-        Near(expected.w, actual.w, L"w");
+        Near(expected.x, actual.x, "x");
+        Near(expected.y, actual.y, "y");
+        Near(expected.z, actual.z, "z");
+        Near(expected.w, actual.w, "w");
     }
 
     template <typename Matrix>
@@ -51,8 +51,8 @@ namespace TestHelpers
         {
             for (std::size_t column = 0; column < count; ++column)
             {
-                std::wostringstream context;
-                context << L"matrix[" << row << L"][" << column << L"]";
+                std::ostringstream context;
+                context << "matrix[" << row << "][" << column << "]";
                 Near(expected.values[row][column], actual.values[row][column], context.str().c_str());
             }
         }
