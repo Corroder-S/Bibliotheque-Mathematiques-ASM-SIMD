@@ -41,11 +41,33 @@ namespace Maths
             }
         }
 
+
         void DotProduct_SOA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count)
         {
             for (size_t i = 0; i < count; ++i)
             {
                 result[i] = a.x[i] * b.x[i] + a.y[i] * b.y[i] + a.z[i] * b.z[i];
+            }
+        }
+
+        void NormalizeBatch_AOS(const Vec3f* input, Vec3f* output, size_t count)
+        {
+            for (size_t i = 0; i < count; ++i)
+            {
+                const Vec3f& v = input[i];
+
+                const bool finite = std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
+                const float magSq = v.x * v.x + v.y * v.y + v.z * v.z;
+
+                if (!finite || magSq == 0.0f)
+                {
+                    output[i] = Vec3f::Zero;
+                }
+                else
+                {
+                    const float invMag = 1.0f / std::sqrt(magSq);
+                    output[i] = { v.x * invMag, v.y * invMag, v.z * invMag };
+                }
             }
         }
     }

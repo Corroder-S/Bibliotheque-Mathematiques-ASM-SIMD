@@ -3,7 +3,6 @@
 #include <numbers>
 #include <type_traits>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace TestHelpers;
 
 namespace
@@ -28,8 +27,8 @@ namespace
         matrix(1, 0) = T{99};
         const M& view = matrix;
         Near(T{99}, view(1, 0));
-        Assert::ExpectException<std::out_of_range>([&] { (void)matrix(4, 0); });
-        Assert::ExpectException<std::out_of_range>([&] { (void)view(0, 4); });
+        EXPECT_THROW((void)matrix(4, 0), std::out_of_range);
+        EXPECT_THROW((void)view(0, 4), std::out_of_range);
     }
 
     template <typename T>
@@ -51,7 +50,7 @@ namespace
         const M b = M(std::array<T, 16>{-1, 2, -2, 1, -3, 0, 3, -1, 2, -2, 1, -3, 0, 3, -1, 2});
         const M expected = M(std::array<T, 16>{-1, 8, 3, -2, -9, 20, 7, -6, -17, 32, 11, -10, -25, 44, 15, -14});
         MatrixNear(expected, a * b);
-        Assert::IsTrue(a * b != b * a);
+        EXPECT_TRUE(a * b != b * a);
     }
 
     template <typename T>
@@ -59,7 +58,7 @@ namespace
     {
         using M = Maths::Matrix4x4<T>;
         M matrix = M(std::array<T, 16>{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
-        Assert::IsTrue(&(matrix *= matrix) == &matrix);
+        EXPECT_TRUE(&(matrix *= matrix) == &matrix);
         MatrixNear(M(std::array<T, 16>{90, 100, 110, 120, 202, 228, 254, 280, 314, 356, 398, 440, 426, 484, 542, 600}), matrix);
     }
 
@@ -87,15 +86,13 @@ namespace
         using M = Maths::Matrix4x4<T>;
         const M a;
         for (std::size_t r=0; r<4; ++r)
-        {
             for (std::size_t c=0; c<4; ++c)
             {
                 M b = a;
                 b(r,c) += T{1};
-                Assert::IsTrue(a != b);
+                EXPECT_TRUE(a != b);
             }
-        }
-        Assert::IsTrue(a == a);
+        EXPECT_TRUE(a == a);
     }
 
     template <typename T>
@@ -155,7 +152,7 @@ namespace
     {
         using M = Maths::Matrix4x4<T>;
         const M matrix = M(std::array<T, 16>{4, 1, -1, 1, 2, 5, 2, 0, 1, -1, 6, -1, 0, 2, 0, 7});
-        const M expected = M(std::array<T, 16>{T{44} / T{175}, T{-1} / T{35}, T{9} / T{175}, T{-1} / T{35}, T{-2} / T{25}, T{1} / T{5}, T{-2} / T{25}, T{0} / T{1}, T{-9} / T{175}, T{1} / T{35}, T{26} / T{175}, T{1} / T{35}, T{4} / T{175}, T{-2} / T{35}, T{4} / T{175}, T{1} / T{7}});
+        const M expected = M(std::array<T, 16>{T{44}/T{175}, T{-1}/T{35}, T{9}/T{175}, T{-1}/T{35}, T{-2}/T{25}, T{1}/T{5}, T{-2}/T{25}, T{0}/T{1}, T{-9}/T{175}, T{1}/T{35}, T{26}/T{175}, T{1}/T{35}, T{4}/T{175}, T{-2}/T{35}, T{4}/T{175}, T{1}/T{7}});
         MatrixNear(expected, matrix.Inverse());
     }
 
@@ -163,28 +160,26 @@ namespace
     void InverseRejectsSingularAndNonFinite()
     {
         using M = Maths::Matrix4x4<T>;
-        Assert::ExpectException<std::domain_error>([] { (void)M::Zero().Inverse(); });
+        EXPECT_THROW((void)M::Zero().Inverse(), std::domain_error);
         M duplicate;
         for (std::size_t c=0; c<4; ++c)
-        {
             duplicate(1,c) = duplicate(0,c);
-        }
         Near(T{0}, duplicate.Determinant());
-        Assert::ExpectException<std::domain_error>([&] { (void)duplicate.Inverse(); });
+        EXPECT_THROW((void)duplicate.Inverse(), std::domain_error);
         M invalid;
         invalid(0,0) = std::numeric_limits<T>::infinity();
-        Assert::ExpectException<std::domain_error>([&] { (void)invalid.Inverse(); });
+        EXPECT_THROW((void)invalid.Inverse(), std::domain_error);
         invalid(0,0) = std::numeric_limits<T>::quiet_NaN();
-        Assert::ExpectException<std::domain_error>([&] { (void)invalid.Inverse(); });
+        EXPECT_THROW((void)invalid.Inverse(), std::domain_error);
     }
 
     template <typename T>
     void InverseValidatesTolerance()
     {
         using M = Maths::Matrix4x4<T>;
-        Assert::ExpectException<std::invalid_argument>([] { (void)M{}.Inverse(T{-1}); });
-        Assert::ExpectException<std::invalid_argument>([] { (void)M{}.Inverse(T{1}); });
-        Assert::ExpectException<std::invalid_argument>([] { (void)M{}.Inverse(std::numeric_limits<T>::quiet_NaN()); });
+        EXPECT_THROW((void)M{}.Inverse(T{-1}), std::invalid_argument);
+        EXPECT_THROW((void)M{}.Inverse(T{1}), std::invalid_argument);
+        EXPECT_THROW((void)M{}.Inverse(std::numeric_limits<T>::quiet_NaN()), std::invalid_argument);
     }
 
     template <typename T>
@@ -192,11 +187,9 @@ namespace
     {
         using M = Maths::Matrix4x4<T>;
         M matrix;
-        matrix(0,0) = T{1};
-        matrix(0,1) = T{1};
-        matrix(1,0) = T{1};
-        matrix(1,1) = T{1} + std::numeric_limits<T>::epsilon();
-        Assert::ExpectException<std::domain_error>([&] { (void)matrix.Inverse(); });
+        matrix(0,0) = T{1}; matrix(0,1) = T{1};
+        matrix(1,0) = T{1}; matrix(1,1) = T{1} + std::numeric_limits<T>::epsilon();
+        EXPECT_THROW((void)matrix.Inverse(), std::domain_error);
     }
 
     template <typename T>
@@ -239,226 +232,50 @@ namespace
         using M = Maths::Matrix4x4<T>;
         M matrix;
         matrix(3,2) = T{1};
-        Assert::ExpectException<std::domain_error>([&] { (void)matrix.TransformPoint(Maths::Vec3<T>{1,2,3}); });
-        Assert::ExpectException<std::domain_error>([&] { (void)matrix.TransformDirection(Maths::Vec3<T>{1,2,3}); });
+        EXPECT_THROW((void)matrix.TransformPoint(Maths::Vec3<T>{1,2,3}), std::domain_error);
+        EXPECT_THROW((void)matrix.TransformDirection(Maths::Vec3<T>{1,2,3}), std::domain_error);
     }
-
 }
 
-namespace MathStarterTests
-{
-    TEST_CLASS(Matrix4x4Tests)
-    {
-    public:
-        TEST_METHOD(DefaultAndFactoryAreIdentity_float)
-        {
-            DefaultAndFactoryAreIdentity<float>();
-        }
-
-        TEST_METHOD(DefaultAndFactoryAreIdentity_double)
-        {
-            DefaultAndFactoryAreIdentity<double>();
-        }
-
-        TEST_METHOD(ConstructorAndIndexUseRowMajorOrder_float)
-        {
-            ConstructorAndIndexUseRowMajorOrder<float>();
-        }
-
-        TEST_METHOD(ConstructorAndIndexUseRowMajorOrder_double)
-        {
-            ConstructorAndIndexUseRowMajorOrder<double>();
-        }
-
-        TEST_METHOD(ArithmeticHasIndependentExpectedValues_float)
-        {
-            ArithmeticHasIndependentExpectedValues<float>();
-        }
-
-        TEST_METHOD(ArithmeticHasIndependentExpectedValues_double)
-        {
-            ArithmeticHasIndependentExpectedValues<double>();
-        }
-
-        TEST_METHOD(MatrixProductHasIndependentExpectedValues_float)
-        {
-            MatrixProductHasIndependentExpectedValues<float>();
-        }
-
-        TEST_METHOD(MatrixProductHasIndependentExpectedValues_double)
-        {
-            MatrixProductHasIndependentExpectedValues<double>();
-        }
-
-        TEST_METHOD(MultiplyAssignSupportsSelfAliasing_float)
-        {
-            MultiplyAssignSupportsSelfAliasing<float>();
-        }
-
-        TEST_METHOD(MultiplyAssignSupportsSelfAliasing_double)
-        {
-            MultiplyAssignSupportsSelfAliasing<double>();
-        }
-
-        TEST_METHOD(MatrixVectorUsesColumnVectorConvention_float)
-        {
-            MatrixVectorUsesColumnVectorConvention<float>();
-        }
-
-        TEST_METHOD(MatrixVectorUsesColumnVectorConvention_double)
-        {
-            MatrixVectorUsesColumnVectorConvention<double>();
-        }
-
-        TEST_METHOD(TransposeMovesEveryElement_float)
-        {
-            TransposeMovesEveryElement<float>();
-        }
-
-        TEST_METHOD(TransposeMovesEveryElement_double)
-        {
-            TransposeMovesEveryElement<double>();
-        }
-
-        TEST_METHOD(EqualityChecksEveryElement_float)
-        {
-            EqualityChecksEveryElement<float>();
-        }
-
-        TEST_METHOD(EqualityChecksEveryElement_double)
-        {
-            EqualityChecksEveryElement<double>();
-        }
-
-        TEST_METHOD(ScaleHasKnownResult_float)
-        {
-            ScaleHasKnownResult<float>();
-        }
-
-        TEST_METHOD(ScaleHasKnownResult_double)
-        {
-            ScaleHasKnownResult<double>();
-        }
-
-        TEST_METHOD(RotationXIsRightHanded_float)
-        {
-            RotationXIsRightHanded<float>();
-        }
-
-        TEST_METHOD(RotationXIsRightHanded_double)
-        {
-            RotationXIsRightHanded<double>();
-        }
-
-        TEST_METHOD(RotationYIsRightHanded_float)
-        {
-            RotationYIsRightHanded<float>();
-        }
-
-        TEST_METHOD(RotationYIsRightHanded_double)
-        {
-            RotationYIsRightHanded<double>();
-        }
-
-        TEST_METHOD(RotationZIsRightHanded_float)
-        {
-            RotationZIsRightHanded<float>();
-        }
-
-        TEST_METHOD(RotationZIsRightHanded_double)
-        {
-            RotationZIsRightHanded<double>();
-        }
-
-        TEST_METHOD(InverseUsesPivotingAndKnownExpectedValues_float)
-        {
-            InverseUsesPivotingAndKnownExpectedValues<float>();
-        }
-
-        TEST_METHOD(InverseUsesPivotingAndKnownExpectedValues_double)
-        {
-            InverseUsesPivotingAndKnownExpectedValues<double>();
-        }
-
-        TEST_METHOD(DenseInverseMatchesRationalFixture_float)
-        {
-            DenseInverseMatchesRationalFixture<float>();
-        }
-
-        TEST_METHOD(DenseInverseMatchesRationalFixture_double)
-        {
-            DenseInverseMatchesRationalFixture<double>();
-        }
-
-        TEST_METHOD(InverseRejectsSingularAndNonFinite_float)
-        {
-            InverseRejectsSingularAndNonFinite<float>();
-        }
-
-        TEST_METHOD(InverseRejectsSingularAndNonFinite_double)
-        {
-            InverseRejectsSingularAndNonFinite<double>();
-        }
-
-        TEST_METHOD(InverseValidatesTolerance_float)
-        {
-            InverseValidatesTolerance<float>();
-        }
-
-        TEST_METHOD(InverseValidatesTolerance_double)
-        {
-            InverseValidatesTolerance<double>();
-        }
-
-        TEST_METHOD(InverseToleranceCanRejectNearDependentRows_float)
-        {
-            InverseToleranceCanRejectNearDependentRows<float>();
-        }
-
-        TEST_METHOD(InverseToleranceCanRejectNearDependentRows_double)
-        {
-            InverseToleranceCanRejectNearDependentRows<double>();
-        }
-
-        TEST_METHOD(InverseHandlesDifferentRowScales_float)
-        {
-            InverseHandlesDifferentRowScales<float>();
-        }
-
-        TEST_METHOD(InverseHandlesDifferentRowScales_double)
-        {
-            InverseHandlesDifferentRowScales<double>();
-        }
-
-        TEST_METHOD(TranslationAffectsPointsButNotDirections_float)
-        {
-            TranslationAffectsPointsButNotDirections<float>();
-        }
-
-        TEST_METHOD(TranslationAffectsPointsButNotDirections_double)
-        {
-            TranslationAffectsPointsButNotDirections<double>();
-        }
-
-        TEST_METHOD(CompositionAppliesRightMatrixFirst_float)
-        {
-            CompositionAppliesRightMatrixFirst<float>();
-        }
-
-        TEST_METHOD(CompositionAppliesRightMatrixFirst_double)
-        {
-            CompositionAppliesRightMatrixFirst<double>();
-        }
-
-        TEST_METHOD(AffineHelpersRejectPerspective_float)
-        {
-            AffineHelpersRejectPerspective<float>();
-        }
-
-        TEST_METHOD(AffineHelpersRejectPerspective_double)
-        {
-            AffineHelpersRejectPerspective<double>();
-        }
-
-    };
-}
+TEST(Matrix4x4Tests, DefaultAndFactoryAreIdentity_float)            { DefaultAndFactoryAreIdentity<float>(); }
+TEST(Matrix4x4Tests, DefaultAndFactoryAreIdentity_double)           { DefaultAndFactoryAreIdentity<double>(); }
+TEST(Matrix4x4Tests, ConstructorAndIndexUseRowMajorOrder_float)     { ConstructorAndIndexUseRowMajorOrder<float>(); }
+TEST(Matrix4x4Tests, ConstructorAndIndexUseRowMajorOrder_double)    { ConstructorAndIndexUseRowMajorOrder<double>(); }
+TEST(Matrix4x4Tests, ArithmeticHasIndependentExpectedValues_float)  { ArithmeticHasIndependentExpectedValues<float>(); }
+TEST(Matrix4x4Tests, ArithmeticHasIndependentExpectedValues_double) { ArithmeticHasIndependentExpectedValues<double>(); }
+TEST(Matrix4x4Tests, MatrixProductHasIndependentExpectedValues_float)  { MatrixProductHasIndependentExpectedValues<float>(); }
+TEST(Matrix4x4Tests, MatrixProductHasIndependentExpectedValues_double) { MatrixProductHasIndependentExpectedValues<double>(); }
+TEST(Matrix4x4Tests, MultiplyAssignSupportsSelfAliasing_float)      { MultiplyAssignSupportsSelfAliasing<float>(); }
+TEST(Matrix4x4Tests, MultiplyAssignSupportsSelfAliasing_double)     { MultiplyAssignSupportsSelfAliasing<double>(); }
+TEST(Matrix4x4Tests, MatrixVectorUsesColumnVectorConvention_float)  { MatrixVectorUsesColumnVectorConvention<float>(); }
+TEST(Matrix4x4Tests, MatrixVectorUsesColumnVectorConvention_double) { MatrixVectorUsesColumnVectorConvention<double>(); }
+TEST(Matrix4x4Tests, TransposeMovesEveryElement_float)              { TransposeMovesEveryElement<float>(); }
+TEST(Matrix4x4Tests, TransposeMovesEveryElement_double)             { TransposeMovesEveryElement<double>(); }
+TEST(Matrix4x4Tests, EqualityChecksEveryElement_float)              { EqualityChecksEveryElement<float>(); }
+TEST(Matrix4x4Tests, EqualityChecksEveryElement_double)             { EqualityChecksEveryElement<double>(); }
+TEST(Matrix4x4Tests, ScaleHasKnownResult_float)                     { ScaleHasKnownResult<float>(); }
+TEST(Matrix4x4Tests, ScaleHasKnownResult_double)                    { ScaleHasKnownResult<double>(); }
+TEST(Matrix4x4Tests, RotationXIsRightHanded_float)                  { RotationXIsRightHanded<float>(); }
+TEST(Matrix4x4Tests, RotationXIsRightHanded_double)                 { RotationXIsRightHanded<double>(); }
+TEST(Matrix4x4Tests, RotationYIsRightHanded_float)                  { RotationYIsRightHanded<float>(); }
+TEST(Matrix4x4Tests, RotationYIsRightHanded_double)                 { RotationYIsRightHanded<double>(); }
+TEST(Matrix4x4Tests, RotationZIsRightHanded_float)                  { RotationZIsRightHanded<float>(); }
+TEST(Matrix4x4Tests, RotationZIsRightHanded_double)                 { RotationZIsRightHanded<double>(); }
+TEST(Matrix4x4Tests, InverseUsesPivotingAndKnownExpectedValues_float)  { InverseUsesPivotingAndKnownExpectedValues<float>(); }
+TEST(Matrix4x4Tests, InverseUsesPivotingAndKnownExpectedValues_double) { InverseUsesPivotingAndKnownExpectedValues<double>(); }
+TEST(Matrix4x4Tests, DenseInverseMatchesRationalFixture_float)      { DenseInverseMatchesRationalFixture<float>(); }
+TEST(Matrix4x4Tests, DenseInverseMatchesRationalFixture_double)     { DenseInverseMatchesRationalFixture<double>(); }
+TEST(Matrix4x4Tests, InverseRejectsSingularAndNonFinite_float)      { InverseRejectsSingularAndNonFinite<float>(); }
+TEST(Matrix4x4Tests, InverseRejectsSingularAndNonFinite_double)     { InverseRejectsSingularAndNonFinite<double>(); }
+TEST(Matrix4x4Tests, InverseValidatesTolerance_float)               { InverseValidatesTolerance<float>(); }
+TEST(Matrix4x4Tests, InverseValidatesTolerance_double)              { InverseValidatesTolerance<double>(); }
+TEST(Matrix4x4Tests, InverseToleranceCanRejectNearDependentRows_float)  { InverseToleranceCanRejectNearDependentRows<float>(); }
+TEST(Matrix4x4Tests, InverseToleranceCanRejectNearDependentRows_double) { InverseToleranceCanRejectNearDependentRows<double>(); }
+TEST(Matrix4x4Tests, InverseHandlesDifferentRowScales_float)        { InverseHandlesDifferentRowScales<float>(); }
+TEST(Matrix4x4Tests, InverseHandlesDifferentRowScales_double)       { InverseHandlesDifferentRowScales<double>(); }
+TEST(Matrix4x4Tests, TranslationAffectsPointsButNotDirections_float)  { TranslationAffectsPointsButNotDirections<float>(); }
+TEST(Matrix4x4Tests, TranslationAffectsPointsButNotDirections_double) { TranslationAffectsPointsButNotDirections<double>(); }
+TEST(Matrix4x4Tests, CompositionAppliesRightMatrixFirst_float)      { CompositionAppliesRightMatrixFirst<float>(); }
+TEST(Matrix4x4Tests, CompositionAppliesRightMatrixFirst_double)     { CompositionAppliesRightMatrixFirst<double>(); }
+TEST(Matrix4x4Tests, AffineHelpersRejectPerspective_float)          { AffineHelpersRejectPerspective<float>(); }
+TEST(Matrix4x4Tests, AffineHelpersRejectPerspective_double)         { AffineHelpersRejectPerspective<double>(); }
