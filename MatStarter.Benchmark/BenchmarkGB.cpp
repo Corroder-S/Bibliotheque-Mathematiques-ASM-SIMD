@@ -39,6 +39,26 @@ static void PrepareNormalizeData(std::vector<Maths::Vec3f>& input, size_t count)
 }
 
 // ============================================================
+//  Conversion AoS -> SoA (coût isolé)
+// ============================================================
+
+static void BM_ConvertToSOA(benchmark::State& state)
+{
+    const size_t count = static_cast<size_t>(state.range(0));
+    std::vector<Maths::Vec3f> a, b;
+    std::vector<float> result; // inutile ici mais garde PrepareData tel quel
+    PrepareData(a, b, result, count);
+
+    for (auto _ : state)
+    {
+        auto soa_a = Maths::ConvertToSOA(a.data(), count);
+        benchmark::DoNotOptimize(soa_a.x.data());
+    }
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
+
+// ============================================================
 //  DotProduct AOS
 // ============================================================
 
@@ -161,6 +181,7 @@ static void BM_DotProduct_ASM(benchmark::State& state)
 
 
 // 3 tailles : petite (64), moyenne (4096), grande (1M)
+BENCHMARK(BM_ConvertToSOA)->Arg(64)->Arg(4096)->Arg(1 << 20);
 BENCHMARK(BM_DotProduct_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20);
 BENCHMARK(BM_DotProduct_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20);
 BENCHMARK(BM_DotProduct_SOA_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20);
