@@ -603,3 +603,6 @@ FodyWeavers.xsd
 
 # Notes personnelles
 rapport_notes.md
+
+# IDE config dans les sous-dossiers
+**/.idea/
