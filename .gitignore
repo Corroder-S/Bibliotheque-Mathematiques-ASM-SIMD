@@ -600,3 +600,6 @@ FodyWeavers.xsd
 /.idea/**/*
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,c++,jetbrains,rider
+
+# Notes personnelles
+rapport_notes.md

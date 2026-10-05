@@ -3,6 +3,8 @@
 #include <vector>
 #include <random>
 
+#include "Maths/ASM/ASM_Vec3.h"
+
 // Données générées hors chronométrage
 
 static Maths::Vec3f RandomVec3(std::mt19937& rng, std::uniform_real_distribution<float>& dist)
@@ -142,6 +144,21 @@ static void BM_Normalize_AOS_SSE(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
+static void BM_DotProduct_ASM(benchmark::State& state)
+{
+    const size_t count = static_cast<size_t>(state.range(0));
+    std::vector<Maths::Vec3f> a, b;
+    std::vector<float> result;
+    PrepareData(a, b, result, count);
+
+    for (auto _ : state)
+    {
+        Maths::ASM_Vec3_DotProduct(a.data(), b.data(), result.data(), count);
+        benchmark::DoNotOptimize(result.data());
+    }
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
 
 // 3 tailles : petite (64), moyenne (4096), grande (1M)
 BENCHMARK(BM_DotProduct_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20);
@@ -150,5 +167,6 @@ BENCHMARK(BM_DotProduct_SOA_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20);
 BENCHMARK(BM_DotProduct_SOA_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20);
 BENCHMARK(BM_Normalize_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20);
 BENCHMARK(BM_Normalize_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20);
+BENCHMARK(BM_DotProduct_ASM)->Arg(64)->Arg(4096)->Arg(1 << 20);
 
 BENCHMARK_MAIN();
