@@ -1,10 +1,10 @@
-#include "Maths/VecBatch.h"
+#include "Maths/Vec3Batch.h"
 
 namespace Maths
 {
-    Vec3fSoA ConvertToSOA(const Vec3f* input, size_t count)
+    Vec3SoA ConvertToSOA(const Vec3f* input, size_t count)
     {
-        Vec3fSoA result;
+        Vec3SoA result;
         result.x.resize(count);
         result.y.resize(count);
         result.z.resize(count);
@@ -22,7 +22,7 @@ namespace Maths
 
     namespace Ref
     {
-        void DotProduct_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count)
+        void DotProductBatch_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count)
         {
             for (size_t i = 0; i < count; ++i)
             {
@@ -31,7 +31,7 @@ namespace Maths
         }
 
 
-        void DotProduct_SOA(const Vec3fSoA& a, const Vec3fSoA& b, float* result, size_t count)
+        void DotProductBatch_SOA(const Vec3SoA& a, const Vec3SoA& b, float* result, size_t count)
         {
             for (size_t i = 0; i < count; ++i)
             {
@@ -60,5 +60,5 @@ namespace Maths
             }
         }
     }
-    
+
 }

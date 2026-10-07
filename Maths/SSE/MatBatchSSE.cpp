@@ -1,6 +1,6 @@
-﻿#include "Maths/MatBatch.h"
-#include <xmmintrin.h> 
-#include <stdexcept> 
+#include "Maths/Mat4Batch.h"
+#include <xmmintrin.h>
+#include <stdexcept>
 
 
 namespace Maths::SSE
@@ -13,32 +13,25 @@ namespace Maths::SSE
         {
             throw std::domain_error("Transform requires an affine matrix");
         }
-        
+
         const Matrix4x4<> trans = transform.Transpose();
-        __m128 pX= _mm_loadu_ps(trans.values[0]);
-        __m128 pY= _mm_loadu_ps(trans.values[1]);
-        __m128 pZ= _mm_loadu_ps(trans.values[2]);
-        __m128 pW= _mm_loadu_ps(trans.values[3]);
+        __m128 pX = _mm_loadu_ps(trans.values[0]);
+        __m128 pY = _mm_loadu_ps(trans.values[1]);
+        __m128 pZ = _mm_loadu_ps(trans.values[2]);
+        __m128 pW = _mm_loadu_ps(trans.values[3]);
         for (std::size_t i = 0; i < count; ++i)
         {
-            
-            __m128 bx =_mm_mul_ps(pX, _mm_set1_ps(points[i].x));
-            __m128 by =_mm_mul_ps(pY, _mm_set1_ps(points[i].y));
-            __m128 bz =_mm_mul_ps(pZ, _mm_set1_ps(points[i].z));
-            
-            
+            __m128 bx = _mm_mul_ps(pX, _mm_set1_ps(points[i].x));
+            __m128 by = _mm_mul_ps(pY, _mm_set1_ps(points[i].y));
+            __m128 bz = _mm_mul_ps(pZ, _mm_set1_ps(points[i].z));
+
             bx = _mm_add_ps(bx, by);
             bx = _mm_add_ps(bx, bz);
             bx = _mm_add_ps(bx, pW);
-            
-            
-            
+
             float tmp[4];
             _mm_storeu_ps(tmp, bx);
             outPoints[i] = {tmp[0], tmp[1], tmp[2]};
         }
     }
-    
-    
-    
 }
