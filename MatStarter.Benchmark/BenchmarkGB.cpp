@@ -238,12 +238,62 @@ BENCHMARK(BM_DotProduct_ASM)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_TransformPoint_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_TransformPoint_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 
+static std::string ChooseBenchmark() {
+    while (true)
+    {
+        std::cout << "\n=== Benchmarks disponibles ===\n"
+            << "1. DotProduct AoS (Ref + SSE)\n"
+            << "2. DotProduct SoA (Ref + SSE)\n"
+            << "3. Normalize AoS (Ref + SSE)\n"
+            << "4. DotProduct ASM\n"
+            << "5. TransformPoint (Ref + SSE)\n"
+            << "6. Conversion AoS -> SoA\n"
+            << "7. Tout lancer\n"
+            << "0. Quitter\n"
+            << "> ";
+
+        int choice = 0;
+        std::cin >> choice;
+
+        if (!std::cin)
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Entree invalide.\n";
+            continue;
+        }
+
+        switch (choice)
+        {
+        case 1: return "BM_DotProduct_AOS";
+        case 2: return "BM_DotProduct_SOA";
+        case 3: return "BM_Normalize_AOS";
+        case 4: return "BM_DotProduct_ASM";
+        case 5: return "BM_TransformPoint";
+        case 6: return "BM_ConvertToSOA";
+        case 7: return ".*";
+        case 0: return "";
+        default:
+            std::cout << "Choix invalide.\n";
+        }
+    }
+}
+
 int main(int argc, char** argv)
 {
     std::cout << "Compiler: MSVC " << _MSC_VER << "\n";
     std::cout << "Build: Release x64 /O2 /arch:SSE2\n\n";
     ::benchmark::Initialize(&argc, argv);
-    ::benchmark::RunSpecifiedBenchmarks();
+    while (true)
+    {
+        const std::string filter = ChooseBenchmark();
+        if (filter.empty())
+        {
+            break;
+        }
+
+        ::benchmark::RunSpecifiedBenchmarks(filter);
+    }
     ::benchmark::Shutdown();
     std::cout << "\nBenchmarks completed.\n";
     return 0;
