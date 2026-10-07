@@ -1,6 +1,6 @@
 #include "TestHelpers.h"
 #include "Maths/Vec3.h"
-#include "Maths/VecBatch.h"
+#include "Maths/Vec3Batch.h"
 #include <limits>
 
 namespace
@@ -30,7 +30,7 @@ namespace
         const Maths::Vec3f a[] = { {1,2,3}, {2,3,4} };
         const Maths::Vec3f b[] = { {2,3,4}, {1,0,0} };
         float out[2] = {};
-        Maths::Ref::DotProduct_AOS(a, b, out, 2);
+        Maths::Ref::DotProductBatch_AOS(a, b, out, 2);
         TestHelpers::Near(20.0f, out[0]);
         TestHelpers::Near(2.0f, out[1]);
     }
@@ -119,8 +119,8 @@ namespace
     {
         std::vector<Maths::Vec3f> a, b;
         std::vector<float> out;
-        Maths::Ref::DotProduct_AOS(a.data(), b.data(), out.data(), 0);
-        Maths::SSE::DotProduct_AOS(a.data(), b.data(), out.data(), 0);
+        Maths::Ref::DotProductBatch_AOS(a.data(), b.data(), out.data(), 0);
+        Maths::SSE::DotProductBatch_AOS(a.data(), b.data(), out.data(), 0);
     }
 
     void RefAndSSE_AoS_GiveSameResult(size_t count)
@@ -129,8 +129,8 @@ namespace
         BuildKnownData(a, b, count);
         std::vector<float> outRef(count);
         std::vector<float> outSse(count);
-        Maths::Ref::DotProduct_AOS(a.data(), b.data(), outRef.data(), count);
-        Maths::SSE::DotProduct_AOS(a.data(), b.data(), outSse.data(), count);
+        Maths::Ref::DotProductBatch_AOS(a.data(), b.data(), outRef.data(), count);
+        Maths::SSE::DotProductBatch_AOS(a.data(), b.data(), outSse.data(), count);
         for (size_t i = 0; i < count; ++i)
             TestHelpers::Near(outRef[i], outSse[i]);
     }
@@ -139,12 +139,12 @@ namespace
     {
         std::vector<Maths::Vec3f> a, b;
         BuildKnownData(a, b, count);
-        Maths::Vec3fSoA soaA = Maths::ConvertToSOA(a.data(), count);
-        Maths::Vec3fSoA soaB = Maths::ConvertToSOA(b.data(), count);
+        Maths::Vec3SoA soaA = Maths::ConvertToSOA(a.data(), count);
+        Maths::Vec3SoA soaB = Maths::ConvertToSOA(b.data(), count);
         std::vector<float> outRef(count);
         std::vector<float> outSoa(count);
-        Maths::Ref::DotProduct_SOA(soaA, soaB, outRef.data(), count);
-        Maths::SSE::DotProduct_SOA(soaA, soaB, outSoa.data(), count);
+        Maths::Ref::DotProductBatch_SOA(soaA, soaB, outRef.data(), count);
+        Maths::SSE::DotProductBatch_SOA(soaA, soaB, outSoa.data(), count);
         for (size_t i = 0; i < count; ++i)
             TestHelpers::Near(outRef[i], outSoa[i]);
     }

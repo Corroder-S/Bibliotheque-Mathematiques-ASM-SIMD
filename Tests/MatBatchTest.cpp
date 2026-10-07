@@ -1,6 +1,6 @@
 #include "TestHelpers.h"
 #include "Maths/Matrix4x4.h"
-#include "Maths/MatBatch.h"
+#include "Maths/Mat4Batch.h"
 
 namespace
 {

@@ -1,14 +1,11 @@
 #include <iostream>
 #include <benchmark/benchmark.h>
-#include "Maths/VecBatch.h"
+#include "Maths/Vec3Batch.h"
+#include "Maths/Mat4Batch.h"
+#include "Maths/Matrix4x4.h"
+#include "Maths/ASM/Vec3.h"
 #include <vector>
 #include <random>
-
-#include "Maths/MatBatch.h"
-#include "Maths/Matrix4x4.h"
-#include "Maths/ASM/ASM_Vec3.h"
-
-// Données générées hors chronométrage
 
 static Maths::Vec3f RandomVec3(std::mt19937& rng, std::uniform_real_distribution<float>& dist)
 {
@@ -36,9 +33,7 @@ static void PrepareNormalizeData(std::vector<Maths::Vec3f>& input, size_t count)
     std::uniform_real_distribution<float> dist(-1.f, 1.f);
     input.resize(count);
     for (size_t i = 0; i < count; ++i)
-    {
         input[i] = RandomVec3(rng, dist);
-    }
 }
 
 static void PrepareTransformData(std::vector<Maths::Vec3f>& points, size_t count)
@@ -58,7 +53,7 @@ static void BM_ConvertToSOA(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> a, b;
-    std::vector<float> result; // inutile ici mais garde PrepareData tel quel
+    std::vector<float> result;
     PrepareData(a, b, result, count);
 
     for (auto _ : state)
@@ -69,12 +64,11 @@ static void BM_ConvertToSOA(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-
 // ============================================================
 //  DotProduct AOS
 // ============================================================
 
-static void BM_DotProduct_AOS_Ref(benchmark::State& state)
+static void BM_DotProductBatch_AOS_Ref(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> a, b;
@@ -83,13 +77,13 @@ static void BM_DotProduct_AOS_Ref(benchmark::State& state)
 
     for (auto _ : state)
     {
-        Maths::Ref::DotProduct_AOS(a.data(), b.data(), result.data(), count);
+        Maths::Ref::DotProductBatch_AOS(a.data(), b.data(), result.data(), count);
         benchmark::DoNotOptimize(result.data());
     }
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-static void BM_DotProduct_AOS_SSE(benchmark::State& state)
+static void BM_DotProductBatch_AOS_SSE(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> a, b;
@@ -98,7 +92,7 @@ static void BM_DotProduct_AOS_SSE(benchmark::State& state)
 
     for (auto _ : state)
     {
-        Maths::SSE::DotProduct_AOS(a.data(), b.data(), result.data(), count);
+        Maths::SSE::DotProductBatch_AOS(a.data(), b.data(), result.data(), count);
         benchmark::DoNotOptimize(result.data());
     }
     state.SetItemsProcessed(state.iterations() * count);
@@ -108,7 +102,7 @@ static void BM_DotProduct_AOS_SSE(benchmark::State& state)
 //  DotProduct SOA
 // ============================================================
 
-static void BM_DotProduct_SOA_Ref(benchmark::State& state)
+static void BM_DotProductBatch_SOA_Ref(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> a, b;
@@ -119,13 +113,13 @@ static void BM_DotProduct_SOA_Ref(benchmark::State& state)
 
     for (auto _ : state)
     {
-        Maths::Ref::DotProduct_SOA(soa_a, soa_b, result.data(), count);
+        Maths::Ref::DotProductBatch_SOA(soa_a, soa_b, result.data(), count);
         benchmark::DoNotOptimize(result.data());
     }
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-static void BM_DotProduct_SOA_SSE(benchmark::State& state)
+static void BM_DotProductBatch_SOA_SSE(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> a, b;
@@ -136,7 +130,7 @@ static void BM_DotProduct_SOA_SSE(benchmark::State& state)
 
     for (auto _ : state)
     {
-        Maths::SSE::DotProduct_SOA(soa_a, soa_b, result.data(), count);
+        Maths::SSE::DotProductBatch_SOA(soa_a, soa_b, result.data(), count);
         benchmark::DoNotOptimize(result.data());
     }
     state.SetItemsProcessed(state.iterations() * count);
@@ -146,7 +140,7 @@ static void BM_DotProduct_SOA_SSE(benchmark::State& state)
 // Normalize AOS
 // ============================================================
 
-static void BM_Normalize_AOS_Ref(benchmark::State& state)
+static void BM_NormalizeBatch_AOS_Ref(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> input;
@@ -161,7 +155,7 @@ static void BM_Normalize_AOS_Ref(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-static void BM_Normalize_AOS_SSE(benchmark::State& state)
+static void BM_NormalizeBatch_AOS_SSE(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> input;
@@ -176,7 +170,11 @@ static void BM_Normalize_AOS_SSE(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-static void BM_DotProduct_ASM(benchmark::State& state)
+// ============================================================
+// DotProduct ASM
+// ============================================================
+
+static void BM_DotProductBatch_AOS_ASM(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     std::vector<Maths::Vec3f> a, b;
@@ -185,17 +183,17 @@ static void BM_DotProduct_ASM(benchmark::State& state)
 
     for (auto _ : state)
     {
-        Maths::ASM_Vec3_DotProduct(a.data(), b.data(), result.data(), count);
+        Maths::ASM::DotProductBatch_AOS(a.data(), b.data(), result.data(), count);
         benchmark::DoNotOptimize(result.data());
     }
     state.SetItemsProcessed(state.iterations() * count);
 }
 
 // ============================================================
-// TransformPoint (matrice 4x4 * points 3D)
+// TransformPoint
 // ============================================================
 
-static void BM_TransformPoint_Ref(benchmark::State& state)
+static void BM_TransformPointBatch_Ref(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     const Maths::Matrix4x4<> matrix = Maths::Matrix4x4<>::Translation(Maths::Vec3<>{10.f, 20.f, 30.f});
@@ -210,7 +208,7 @@ static void BM_TransformPoint_Ref(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-static void BM_TransformPoint_SSE(benchmark::State& state)
+static void BM_TransformPointBatch_SSE(benchmark::State& state)
 {
     const size_t count = static_cast<size_t>(state.range(0));
     const Maths::Matrix4x4<> matrix = Maths::Matrix4x4<>::Translation(Maths::Vec3<>{10.f, 20.f, 30.f});
@@ -225,18 +223,17 @@ static void BM_TransformPoint_SSE(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
-
 // 3 tailles : petite (64), moyenne (4096), grande (1M)
 BENCHMARK(BM_ConvertToSOA)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_DotProduct_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_DotProduct_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_DotProduct_SOA_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_DotProduct_SOA_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_Normalize_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_Normalize_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_DotProduct_ASM)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_TransformPoint_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
-BENCHMARK(BM_TransformPoint_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_DotProductBatch_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_DotProductBatch_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_DotProductBatch_SOA_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_DotProductBatch_SOA_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_NormalizeBatch_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_NormalizeBatch_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_DotProductBatch_AOS_ASM)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_TransformPointBatch_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_TransformPointBatch_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 
 static std::string ChooseBenchmark() {
     while (true)
@@ -298,4 +295,3 @@ int main(int argc, char** argv)
     std::cout << "\nBenchmarks completed.\n";
     return 0;
 }
-

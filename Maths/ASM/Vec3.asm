@@ -1,12 +1,12 @@
 ; Windows x64 calling convention
 ; Args: rcx, rdx, r8, r9 (puis stack)
 .code
-; void ASM_Vec3_DotProduct(const float* a, const float* b, float* result, size_t count)
+; void ASM_DotProductBatch_AOS(const float* a, const float* b, float* result, size_t count)
 ;   rcx = a       (tableau de Vec3f : x,y,z contigus)
 ;   rdx = b
 ;   r8  = result
 ;   r9  = count
-ASM_Vec3_DotProduct PROC
+ASM_DotProductBatch_AOS PROC
     test r9, r9
     jz done
 
@@ -26,14 +26,13 @@ ASM_Vec3_DotProduct PROC
 
     mulps xmm0 , xmm1    ; multiply a and b component-wise
 
-
-    movaps xmm1 , xmm0    ;
+    movaps xmm1 , xmm0
 
     shufps xmm1, xmm1, 4Eh  ; shuffle to get y and z components
     addss xmm0 , xmm1    ; a.y * b.y + a.z * b.z
 
-    movaps xmm1 , xmm0    ;
-     shufps xmm1, xmm1, 11h  ; shuffle to get x component
+    movaps xmm1 , xmm0
+    shufps xmm1, xmm1, 11h  ; shuffle to get x component
     addss xmm0 , xmm1    ; a.x * b.x + a.y * b.y + a.z * b.z
 
     movss  dword ptr [r8], xmm0    ; store result
@@ -48,5 +47,5 @@ ASM_Vec3_DotProduct PROC
 
     ret
 
-ASM_Vec3_DotProduct ENDP
+ASM_DotProductBatch_AOS ENDP
 END
