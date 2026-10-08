@@ -12,8 +12,7 @@ static Maths::Vec3f RandomVec3(std::mt19937& rng, std::uniform_real_distribution
     return { dist(rng), dist(rng), dist(rng) };
 }
 
-static void PrepareData(std::vector<Maths::Vec3f>& a, std::vector<Maths::Vec3f>& b,
-    std::vector<float>& result, size_t count)
+static void PrepareData(std::vector<Maths::Vec3f>& a, std::vector<Maths::Vec3f>& b, std::vector<float>& result, size_t count)
 {
     std::mt19937 rng(42);
     std::uniform_real_distribution<float> dist(-1.f, 1.f);
@@ -24,6 +23,25 @@ static void PrepareData(std::vector<Maths::Vec3f>& a, std::vector<Maths::Vec3f>&
     {
         a[i] = RandomVec3(rng, dist);
         b[i] = RandomVec3(rng, dist);
+    }
+}
+
+static void PrepareData(std::vector<Maths::Matrix4x4<>>& a, std::vector<Maths::Matrix4x4<>>& b, size_t count)
+{
+    std::mt19937 rng(42);
+    std::uniform_real_distribution<float> dist(-1.f, 1.f);
+    a.resize(count);
+    b.resize(count);
+    for (size_t i = 0; i < count; ++i)
+    {
+        for (int r = 0; r < 4; ++r)
+        {
+            for (int c = 0; c < 4; ++c)
+            {
+                a[i].values[r][c] = dist(rng);
+                b[i].values[r][c] = dist(rng);
+            }
+        }
     }
 }
 
@@ -224,6 +242,37 @@ static void BM_TransformPointBatch_SSE(benchmark::State& state)
 }
 
 // ============================================================
+// Multiply Matrix
+// ============================================================
+
+static void BM_MatMul_Ref(benchmark::State& state)
+{
+    const size_t count = static_cast<size_t>(state.range(0));
+    std::vector<Maths::Matrix4x4<>> a(count), b(count), out(count);
+    PrepareData(a, b, count);
+    for (auto _ : state)
+    {
+        Maths::Ref::MultiplyMatrixBatch(a.data(), b.data(), out.data(), count);
+        benchmark::DoNotOptimize(out.data());
+    }
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
+static void BM_MatMul_SSE(benchmark::State& state)
+{
+    const size_t count = static_cast<size_t>(state.range(0));
+    std::vector<Maths::Matrix4x4<>> a, b, out(count);
+    PrepareData(a, b, count);
+
+    for (auto _ : state)
+    {
+        Maths::SSE::MultiplyMatrixBatch(a.data(), b.data(), out.data(), count);
+        benchmark::DoNotOptimize(out.data());
+    }
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
+// ============================================================
 // CrossProduct SOA
 // ============================================================
 
@@ -276,6 +325,8 @@ BENCHMARK(BM_TransformPointBatch_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetit
 BENCHMARK(BM_TransformPointBatch_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_CrossBatch_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_CrossBatch_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_MatMul_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_MatMul_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 
 static std::string ChooseBenchmark() {
     while (true)
@@ -288,7 +339,8 @@ static std::string ChooseBenchmark() {
             << "5. TransformPoint (Ref + SSE)\n"
             << "6. CrossProduct SoA (Ref + SSE)\n"
             << "7. Conversion AoS -> SoA\n"
-            << "8. Tout lancer\n"
+            << "8. Matrix Multiplication (Ref + SSE)\n"
+            << "9. Tout lancer\n"
             << "0. Quitter\n"
             << "> ";
 
@@ -312,7 +364,8 @@ static std::string ChooseBenchmark() {
         case 5: return "BM_TransformPointBatch";
         case 6: return "BM_CrossBatch";
         case 7: return "BM_ConvertToSOA";
-        case 8: return ".*";
+		case 8: return "BM_MatMul";
+        case 9: return ".*";
         case 0: return "";
         default:
             std::cout << "Choix invalide.\n";

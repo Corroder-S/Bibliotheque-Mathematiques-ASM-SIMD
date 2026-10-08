@@ -34,4 +34,25 @@ namespace Maths::SSE
             outPoints[i] = {tmp[0], tmp[1], tmp[2]};
         }
     }
+
+    void MultiplyMatrixBatch(const Matrix4x4<>* a, const Matrix4x4<>* b, Matrix4x4<>* out, size_t count)
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            const __m128 b0 = _mm_loadu_ps(b[i].values[0]);
+            const __m128 b1 = _mm_loadu_ps(b[i].values[1]);
+            const __m128 b2 = _mm_loadu_ps(b[i].values[2]);
+            const __m128 b3 = _mm_loadu_ps(b[i].values[3]);
+
+            for (int r = 0; r < 4; ++r)
+            {
+                __m128 row = _mm_mul_ps(_mm_set1_ps(a[i].values[r][0]), b0);
+                row = _mm_add_ps(row, _mm_mul_ps(_mm_set1_ps(a[i].values[r][1]), b1));
+                row = _mm_add_ps(row, _mm_mul_ps(_mm_set1_ps(a[i].values[r][2]), b2));
+                row = _mm_add_ps(row, _mm_mul_ps(_mm_set1_ps(a[i].values[r][3]), b3));
+                _mm_storeu_ps(out[i].values[r], row);
+            }
+        }
+    }
 }
+
