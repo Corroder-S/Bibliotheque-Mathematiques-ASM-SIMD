@@ -148,6 +148,24 @@ namespace
         for (size_t i = 0; i < count; ++i)
             TestHelpers::Near(outRef[i], outSoa[i]);
     }
+
+    void RefAndSSE_Cross_GiveSameResult(size_t count)
+    {
+        std::vector<Maths::Vec3f> a, b;
+        BuildKnownData(a, b, count);
+        Maths::Vec3SoA soaA = Maths::ConvertToSOA(a.data(), count);
+        Maths::Vec3SoA soaB = Maths::ConvertToSOA(b.data(), count);
+        std::vector<Maths::Vec3f> outRef(count);
+        std::vector<Maths::Vec3f> outSse(count);
+        Maths::Ref::CrossBatch(soaA, soaB, outRef.data(), count);
+        Maths::SSE::CrossProductBatch(soaA, soaB, outSse.data(), count);
+        for (size_t i = 0; i < count; ++i)
+        {
+            TestHelpers::Near(outRef[i].x, outSse[i].x);
+            TestHelpers::Near(outRef[i].y, outSse[i].y);
+            TestHelpers::Near(outRef[i].z, outSse[i].z);
+        }
+    }
 }
 
 TEST(VecBatchTests, Ref_DotProductMatchesKnownValues)   { Ref_DotProductMatchesKnownValues(); }
@@ -157,3 +175,16 @@ TEST(VecBatchTests, RefAndSSE_AoS_GiveSameResult4)       { RefAndSSE_AoS_GiveSam
 TEST(VecBatchTests, RefAndSSE_SoA_GiveSameResult4)       { RefAndSSE_SoA_GiveSameResult(4); }
 TEST(VecBatchTests, RefAndSSE_AoS_GiveSameResult7)       { RefAndSSE_AoS_GiveSameResult(7); }
 TEST(VecBatchTests, RefAndSSE_SoA_GiveSameResult100)     { RefAndSSE_SoA_GiveSameResult(1000); }
+TEST(VecBatchTests, Ref_NormalizeMatchesKnownValues)        { Ref_NormalizeMatchesKnownValues(); }
+TEST(VecBatchTests, Normalize_ZeroVectorGivesZero)          { Normalize_ZeroVectorGivesZero(); }
+TEST(VecBatchTests, Normalize_NonFiniteGivesZero)           { Normalize_NonFiniteGivesZero(); }
+TEST(VecBatchTests, Normalize_HandlesEmptyBatch)            { Normalize_HandlesEmptyBatch(); }
+TEST(VecBatchTests, RefAndSSE_Normalize_GiveSameResult1)    { RefAndSSE_Normalize_GiveSameResult(1); }
+TEST(VecBatchTests, RefAndSSE_Normalize_GiveSameResult4)    { RefAndSSE_Normalize_GiveSameResult(4); }
+TEST(VecBatchTests, RefAndSSE_Normalize_GiveSameResult7)    { RefAndSSE_Normalize_GiveSameResult(7); }
+TEST(VecBatchTests, Normalize_OutputHasUnitMagnitude1)      { Normalize_OutputHasUnitMagnitude(1); }
+TEST(VecBatchTests, Normalize_OutputHasUnitMagnitude4)      { Normalize_OutputHasUnitMagnitude(4); }
+TEST(VecBatchTests, Normalize_OutputHasUnitMagnitude7)      { Normalize_OutputHasUnitMagnitude(7); }
+TEST(VecBatchTests, RefAndSSE_Cross_GiveSameResult1)        { RefAndSSE_Cross_GiveSameResult(1); }
+TEST(VecBatchTests, RefAndSSE_Cross_GiveSameResult4)        { RefAndSSE_Cross_GiveSameResult(4); }
+TEST(VecBatchTests, RefAndSSE_Cross_GiveSameResult7)        { RefAndSSE_Cross_GiveSameResult(7); }

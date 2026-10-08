@@ -223,6 +223,46 @@ static void BM_TransformPointBatch_SSE(benchmark::State& state)
     state.SetItemsProcessed(state.iterations() * count);
 }
 
+// ============================================================
+// CrossProduct SOA
+// ============================================================
+
+static void BM_CrossBatch_Ref(benchmark::State& state)
+{
+    const size_t count = static_cast<size_t>(state.range(0));
+    std::vector<Maths::Vec3f> a, b;
+    std::vector<float> result;
+    PrepareData(a, b, result, count);
+    auto soa_a = Maths::ConvertToSOA(a.data(), count);
+    auto soa_b = Maths::ConvertToSOA(b.data(), count);
+    std::vector<Maths::Vec3f> out(count);
+
+    for (auto _ : state)
+    {
+        Maths::Ref::CrossBatch(soa_a, soa_b, out.data(), count);
+        benchmark::DoNotOptimize(out.data());
+    }
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
+static void BM_CrossBatch_SSE(benchmark::State& state)
+{
+    const size_t count = static_cast<size_t>(state.range(0));
+    std::vector<Maths::Vec3f> a, b;
+    std::vector<float> result;
+    PrepareData(a, b, result, count);
+    auto soa_a = Maths::ConvertToSOA(a.data(), count);
+    auto soa_b = Maths::ConvertToSOA(b.data(), count);
+    std::vector<Maths::Vec3f> out(count);
+
+    for (auto _ : state)
+    {
+        Maths::SSE::CrossProductBatch(soa_a, soa_b, out.data(), count);
+        benchmark::DoNotOptimize(out.data());
+    }
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
 // 3 tailles : petite (64), moyenne (4096), grande (1M)
 BENCHMARK(BM_ConvertToSOA)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_DotProductBatch_AOS_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
@@ -234,6 +274,8 @@ BENCHMARK(BM_NormalizeBatch_AOS_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetiti
 BENCHMARK(BM_DotProductBatch_AOS_ASM)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_TransformPointBatch_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_TransformPointBatch_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_CrossBatch_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
+BENCHMARK(BM_CrossBatch_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 
 static std::string ChooseBenchmark() {
     while (true)
@@ -244,8 +286,9 @@ static std::string ChooseBenchmark() {
             << "3. Normalize AoS (Ref + SSE)\n"
             << "4. DotProduct ASM\n"
             << "5. TransformPoint (Ref + SSE)\n"
-            << "6. Conversion AoS -> SoA\n"
-            << "7. Tout lancer\n"
+            << "6. CrossProduct SoA (Ref + SSE)\n"
+            << "7. Conversion AoS -> SoA\n"
+            << "8. Tout lancer\n"
             << "0. Quitter\n"
             << "> ";
 
@@ -267,8 +310,9 @@ static std::string ChooseBenchmark() {
         case 3: return "BM_NormalizeBatch_AOS";
         case 4: return "BM_DotProductBatch_AOS_ASM";
         case 5: return "BM_TransformPointBatch";
-        case 6: return "BM_ConvertToSOA";
-        case 7: return ".*";
+        case 6: return "BM_CrossBatch";
+        case 7: return "BM_ConvertToSOA";
+        case 8: return ".*";
         case 0: return "";
         default:
             std::cout << "Choix invalide.\n";

@@ -19,6 +19,7 @@ namespace Maths
         void DotProductBatch_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count);
         void DotProductBatch_SOA(const Vec3SoA& a, const Vec3SoA& b, float* result, size_t count);
         void NormalizeBatch_AOS(const Vec3f* input, Vec3f* output, size_t count);
+        void CrossBatch(const Vec3SoA& a, const Vec3SoA& b, Vec3f* result, size_t count);
     }
 
     namespace SSE
@@ -26,6 +27,7 @@ namespace Maths
         void DotProductBatch_AOS(const Vec3f* a, const Vec3f* b, float* result, size_t count);
         void DotProductBatch_SOA(const Vec3SoA& a, const Vec3SoA& b, float* result, size_t count);
         void NormalizeBatch_AOS(const Vec3f* input, Vec3f* output, size_t count);
+        void CrossProductBatch(const Vec3SoA& a, const Vec3SoA& b, Vec3f* result, size_t count);
     }
 
 }

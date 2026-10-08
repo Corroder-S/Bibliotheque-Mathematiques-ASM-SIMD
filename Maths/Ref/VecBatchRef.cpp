@@ -59,6 +59,17 @@ namespace Maths
                 }
             }
         }
+        void CrossBatch(const Vec3SoA& a, const Vec3SoA& b, Vec3f* result, size_t count)
+        {
+            for (size_t i = 0; i < count; ++i)
+            {
+                result[i] = {
+                    a.y[i] * b.z[i] - a.z[i] * b.y[i],
+                    a.z[i] * b.x[i] - a.x[i] * b.z[i],
+                    a.x[i] * b.y[i] - a.y[i] * b.x[i]
+                };
+            }
+        }
     }
 
 }

@@ -107,5 +107,40 @@ namespace Maths
                 }
             }
         }
+        void CrossProductBatch(const Vec3SoA& a, const Vec3SoA& b, Vec3f* result, size_t count)
+        {
+            size_t i = 0;
+            for (; i + 4 <= count; i += 4)
+            {
+                __m128 ax = _mm_loadu_ps(&a.x[i]);
+                __m128 ay = _mm_loadu_ps(&a.y[i]);
+                __m128 az = _mm_loadu_ps(&a.z[i]);
+
+                __m128 bx = _mm_loadu_ps(&b.x[i]);
+                __m128 by = _mm_loadu_ps(&b.y[i]);
+                __m128 bz = _mm_loadu_ps(&b.z[i]);
+
+                __m128 cx = _mm_sub_ps(_mm_mul_ps(ay, bz), _mm_mul_ps(az, by));
+                __m128 cy = _mm_sub_ps(_mm_mul_ps(az, bx), _mm_mul_ps(ax, bz));
+                __m128 cz = _mm_sub_ps(_mm_mul_ps(ax, by), _mm_mul_ps(ay, bx));
+
+                alignas(16) float tmp[4];
+                _mm_store_ps(tmp, cx);
+                for (size_t j = 0; j < 4; ++j) result[i+j].x = tmp[j];
+                _mm_store_ps(tmp, cy);
+                for (size_t j = 0; j < 4; ++j) result[i+j].y = tmp[j];
+                _mm_store_ps(tmp, cz);
+                for (size_t j = 0; j < 4; ++j) result[i+j].z = tmp[j];
+            }
+            for (; i < count; ++i)
+            {
+                result[i] = {
+                    a.y[i] * b.z[i] - a.z[i] * b.y[i],
+                    a.z[i] * b.x[i] - a.x[i] * b.z[i],
+                    a.x[i] * b.y[i] - a.y[i] * b.x[i]
+                };
+            }
+        }
+
     }
 }
