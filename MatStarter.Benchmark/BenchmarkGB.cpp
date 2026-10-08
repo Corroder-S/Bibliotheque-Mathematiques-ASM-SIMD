@@ -262,11 +262,11 @@ static std::string ChooseBenchmark() {
 
         switch (choice)
         {
-        case 1: return "BM_DotProduct_AOS";
-        case 2: return "BM_DotProduct_SOA";
-        case 3: return "BM_Normalize_AOS";
-        case 4: return "BM_DotProduct_ASM";
-        case 5: return "BM_TransformPoint";
+        case 1: return "BM_DotProductBatch_AOS";
+        case 2: return "BM_DotProductBatch_SOA";
+        case 3: return "BM_NormalizeBatch_AOS";
+        case 4: return "BM_DotProductBatch_AOS_ASM";
+        case 5: return "BM_TransformPointBatch";
         case 6: return "BM_ConvertToSOA";
         case 7: return ".*";
         case 0: return "";
