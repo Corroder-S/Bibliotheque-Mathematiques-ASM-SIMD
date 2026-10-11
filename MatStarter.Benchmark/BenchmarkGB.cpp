@@ -7,6 +7,8 @@
 #include <vector>
 #include <random>
 
+static uint32_t g_seed = 42;
+
 static Maths::Vec3f RandomVec3(std::mt19937& rng, std::uniform_real_distribution<float>& dist)
 {
     return { dist(rng), dist(rng), dist(rng) };
@@ -14,7 +16,7 @@ static Maths::Vec3f RandomVec3(std::mt19937& rng, std::uniform_real_distribution
 
 static void PrepareData(std::vector<Maths::Vec3f>& a, std::vector<Maths::Vec3f>& b, std::vector<float>& result, size_t count)
 {
-    std::mt19937 rng(42);
+    std::mt19937 rng(g_seed);
     std::uniform_real_distribution<float> dist(-1.f, 1.f);
     a.resize(count);
     b.resize(count);
@@ -28,7 +30,7 @@ static void PrepareData(std::vector<Maths::Vec3f>& a, std::vector<Maths::Vec3f>&
 
 static void PrepareData(std::vector<Maths::Matrix4x4<>>& a, std::vector<Maths::Matrix4x4<>>& b, size_t count)
 {
-    std::mt19937 rng(42);
+    std::mt19937 rng(g_seed);
     std::uniform_real_distribution<float> dist(-1.f, 1.f);
     a.resize(count);
     b.resize(count);
@@ -47,7 +49,7 @@ static void PrepareData(std::vector<Maths::Matrix4x4<>>& a, std::vector<Maths::M
 
 static void PrepareNormalizeData(std::vector<Maths::Vec3f>& input, size_t count)
 {
-    std::mt19937 rng(42);
+    std::mt19937 rng(g_seed);
     std::uniform_real_distribution<float> dist(-1.f, 1.f);
     input.resize(count);
     for (size_t i = 0; i < count; ++i)
@@ -56,7 +58,7 @@ static void PrepareNormalizeData(std::vector<Maths::Vec3f>& input, size_t count)
 
 static void PrepareTransformData(std::vector<Maths::Vec3f>& points, size_t count)
 {
-    std::mt19937 rng(42);
+    std::mt19937 rng(g_seed);
     std::uniform_real_distribution<float> dist(-1.f, 1.f);
     points.resize(count);
     for (size_t i = 0; i < count; ++i)
@@ -328,6 +330,38 @@ BENCHMARK(BM_CrossBatch_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_MatMul_Ref)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 BENCHMARK(BM_MatMul_SSE)->Arg(64)->Arg(4096)->Arg(1 << 20)->Repetitions(5);
 
+static void ChooseSeed()
+{
+    const uint32_t presets[] = { 42, 123, 1337, 99999, 0xDEADBEEF };
+
+    std::cout << "\n=== Seed des donnees ===\n"
+              << "Seed actuelle : " << g_seed << "\n"
+              << "1. Entrer une seed manuellement\n"
+              << "2. Choisir parmi les presets : 42 / 123 / 1337 / 99999 / 3735928559\n"
+              << "3. Garder la seed actuelle\n"
+              << "> ";
+
+    int choice = 0;
+    std::cin >> choice;
+    if (!std::cin) { std::cin.clear(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); return; }
+
+    if (choice == 1)
+    {
+        std::cout << "Seed : ";
+        std::cin >> g_seed;
+        if (!std::cin) { std::cin.clear(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); }
+    }
+    else if (choice == 2)
+    {
+        std::cout << "Preset (1-5) : ";
+        int p = 0;
+        std::cin >> p;
+        if (!std::cin) { std::cin.clear(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); return; }
+        if (p >= 1 && p <= 5) g_seed = presets[p - 1];
+    }
+    std::cout << "Seed utilisee : " << g_seed << "\n";
+}
+
 static std::string ChooseBenchmark() {
     while (true)
     {
@@ -378,6 +412,7 @@ int main(int argc, char** argv)
     std::cout << "Compiler: MSVC " << _MSC_VER << "\n";
     std::cout << "Build: Release x64 /O2 /arch:SSE2\n\n";
     ::benchmark::Initialize(&argc, argv);
+    ChooseSeed();
     while (true)
     {
         const std::string filter = ChooseBenchmark();
@@ -386,6 +421,7 @@ int main(int argc, char** argv)
             break;
         }
 
+        std::cout << "Seed : " << g_seed << "\n";
         ::benchmark::RunSpecifiedBenchmarks(filter);
     }
     ::benchmark::Shutdown();
