@@ -70,7 +70,9 @@ MatStarter.Benchmark\MathStarterBenchmark.exe
 0. Quitter
 ```
 
-Les données sont générées avec une graine fixe (42). Chaque benchmark tourne sur 3 tailles (64, 4096, 1 048 576 éléments), 5 répétitions. Les résultats bruts sont joints au dépôt.
+Avant le menu, un prompt de seed permet de choisir la graine utilisée pour générer les données (saisie libre ou preset : 42 / 123 / 1337 / 99999 / 3735928559 — défaut : 42). La seed est affichée avant chaque lancement pour garantir la reproductibilité.
+
+Chaque benchmark tourne sur 3 tailles (64, 4096, 1 048 576 éléments), 5 répétitions. Les résultats bruts sont joints au dépôt.
 
 ---
 
@@ -118,26 +120,20 @@ tolerance = absoluteTolerance + relativeTolerance * |expected|
 
 ## Fonctionnalités réalisées
 
-**Socle obligatoire**
-
-| Traitement | Ref | SSE | ASM |
-|---|---|---|---|
-| DotProductBatch AoS | ✓ | ✓ | ✓ |
-| DotProductBatch SoA | ✓ | ✓ | — |
-| NormalizeBatch AoS | ✓ | ✓ | — |
-| TransformPointBatch | ✓ | ✓ | — |
+| Traitement | Ref | SSE | ASM | Obligatoire |
+|---|---|---|---|---|
+| DotProductBatch AoS | ✓ | ✓ | ✓ | ✓ |
+| DotProductBatch SoA | ✓ | ✓ | — | ✓ |
+| NormalizeBatch AoS | ✓ | ✓ | — | ✓ |
+| TransformPointBatch | ✓ | ✓ | — | ✓ |
+| ConvertToSOA | ✓ | — | — | ✓ |
+| CrossProductBatch SoA | ✓ | ✓ | — | — |
+| MultiplyMatrixBatch | ✓ | ✓ | — | — |
 
 - Comparaison AoS / SoA sur le produit scalaire, coût de conversion mesuré séparément
 - Fonction ASM x64 (MASM) : `ASM_DotProductBatch_AOS`, convention d'appel Windows x64
 - Deux extraits de désassemblage commentés (voir rapport technique)
 - Profil CPU sur le produit scalaire AoS (Visual Studio Utilisation de l'UC)
-
-**Extension réalisée**
-
-| Traitement | Ref | SSE |
-|---|---|---|
-| CrossProductBatch SoA | ✓ | ✓ |
-| MultiplyMatrixBatch | ✓ | ✓ |
 
 ---
 
